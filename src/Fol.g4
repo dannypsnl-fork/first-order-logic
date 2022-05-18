@@ -1,22 +1,21 @@
 grammar Fol;
 logic :
-    term '&' logic
-  | term '|' logic
-  | term '=' logic
-  | '~' logic
-  |<assoc=right> term op='=>' logic
+    quantifier+ (term '=>' term)
   | term
   ;
 term :
-    quantifier logic
-  | CONST '(' VAR (',' VAR)* ')'
-  | '(' logic ')'
+    term '&' term
+  | term '|' term
+  | term '=' term
+  | '~' '(' term ')'
+  | '(' term ')'
+  | CONST '(' (VAR|CONST) (',' (VAR|CONST))* ')'
   ;
-quantifier : (FORALL|EXISTS) VAR+
+quantifier : op=(FORALL|EXISTS) VAR+
   ;
 
 FORALL : '@' ;
 EXISTS : '#' ;
 VAR : [a-z]+ ;
-CONST : [A-Z][a-zA-Z0-9]+ ;
+CONST : [A-Z][a-zA-Z0-9]* ;
 WS : [ \t\r\n]+ -> skip ;
