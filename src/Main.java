@@ -7,6 +7,8 @@ import org.antlr.v4.runtime.CommonTokenStream;
 
 import java.util.Collections;
 
+import static java.util.stream.Collectors.toList;
+
 class FOLBuildVisitor extends FolBaseVisitor<FOL> {
     @Override
     public FOL visitLogic(FolParser.LogicContext ctx) {
@@ -18,7 +20,7 @@ class FOLBuildVisitor extends FolBaseVisitor<FOL> {
             Collections.reverse(qs);
             FOL cumulative = new Implication(visitTerm(ctx.term(0)),visitTerm(ctx.term(1)));
             for(var q : qs) {
-                var vars = q.VAR();
+                var vars = q.VAR().stream().map((v) -> v.getText()).collect(toList());
                 switch (q.op.getText()) {
                     case "@" -> cumulative = new Forall(vars, cumulative);
                     case "#" -> cumulative = new Exists(vars, cumulative);
@@ -35,7 +37,7 @@ class FOLBuildVisitor extends FolBaseVisitor<FOL> {
 }
 public class Main {
     public static void main(String[] args) {
-        var input = "@x Pred1(x) => Pred2(x)";
+        var input = "@x #y Pred1(x) => Pred2(x, y)";
         var lexer =  new FolLexer(new ANTLRInputStream(input));
         var parser = new FolParser(new CommonTokenStream(lexer));
 
