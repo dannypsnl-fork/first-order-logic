@@ -1,12 +1,19 @@
 grammar Fol;
-expr : logic ;
-
 logic :
-  CONST '(' VAR (',' VAR)* ')'
-  | logic '=>' logic
-  | quantifier logic
+    term '&' logic
+  | term '|' logic
+  | term '=' logic
+  | '~' logic
+  |<assoc=right> term op='=>' logic
+  | term
   ;
-quantifier : (FORALL|EXISTS) VAR+;
+term :
+    quantifier logic
+  | CONST '(' VAR (',' VAR)* ')'
+  | '(' logic ')'
+  ;
+quantifier : (FORALL|EXISTS) VAR+
+  ;
 
 FORALL : '@' ;
 EXISTS : '#' ;
