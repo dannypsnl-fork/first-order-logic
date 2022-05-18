@@ -7,12 +7,12 @@ public class Implication implements FOL {
     private final FOL right;
 
     public Implication(FOL left, FOL right) {
-        this.left=left;
-        this.right=right;
+        this.left = left;
+        this.right = right;
     }
 
     @Override
     public String toString() {
-        return left.toString() + " => " + right.toString();
+               return left.toString() + " => " + right.toString();
     }
 }

@@ -18,8 +18,8 @@ class FOLBuildVisitor extends FolBaseVisitor<FOL> {
         } else {
             var qs = ctx.quantifier();
             Collections.reverse(qs);
-            FOL cumulative = new Implication(visitTerm(ctx.term(0)),visitTerm(ctx.term(1)));
-            for(var q : qs) {
+            FOL cumulative = new Implication(visitTerm(ctx.term(0)), visitTerm(ctx.term(1)));
+            for (var q : qs) {
                 var vars = q.VAR().stream().map((v) -> v.getText()).collect(toList());
                 switch (q.op.getText()) {
                     case "@" -> cumulative = new Forall(vars, cumulative);
@@ -35,10 +35,11 @@ class FOLBuildVisitor extends FolBaseVisitor<FOL> {
         return new Term();
     }
 }
+
 public class Main {
     public static void main(String[] args) {
         var input = "@x #y Pred1(x) => Pred2(x, y)";
-        var lexer =  new FolLexer(new ANTLRInputStream(input));
+        var lexer = new FolLexer(new ANTLRInputStream(input));
         var parser = new FolParser(new CommonTokenStream(lexer));
 
         var builder = new FOLBuildVisitor();

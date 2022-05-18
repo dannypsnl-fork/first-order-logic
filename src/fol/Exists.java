@@ -1,7 +1,5 @@
 package fol;
 
-import org.antlr.v4.runtime.tree.TerminalNode;
-
 import java.util.List;
 
 public class Exists implements FOL {
@@ -9,8 +7,8 @@ public class Exists implements FOL {
     private final FOL body;
 
     public Exists(List<String> vars, FOL body) {
-        this.vars= vars;
-        this.body=body;
+        this.vars = vars;
+        this.body = body;
     }
 
     @Override
