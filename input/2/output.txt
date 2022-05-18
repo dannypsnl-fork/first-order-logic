@@ -1,0 +1,11 @@
+Query:	#x Pred4(x)
+1	Pred1(A)			given
+2	~Pred1(x2)|Pred2(x2)		given
+3	~Pred2(x3)|Pred3(S3(x3))	given
+4	~Pred3(x4)|Pred4(x4)		given
+5	~Pred4(x5)			negated conclusion
+6	~Pred3(x6)			4,5 {x4/x5}
+7	~Pred2(x7)			3,6 {x6/S3(x3)}
+8	~Pred1(x8)			2,7 {x2/x7}
+9	{}				1,8 {x8/A}
+#x Pred4(x) is True
