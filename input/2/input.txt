@@ -1,6 +1,6 @@
 4
 Pred1(A)
-@x, Pred1(x) => Pred2(x)
+@x Pred1(x) => Pred2(x)
 @x #y Pred2(x) => Pred3(y)
 @x Pred3(x) => Pred4(x)
 1
