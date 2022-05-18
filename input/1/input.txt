@@ -1,7 +1,7 @@
 16
 @x Pred1(x) => Pred2(x)
 @x Pred7(x) & Pred9(x) => Pred5(x)
-@x y Pred3(x,y) => Pred4(x,y) & Pred4(y,x)
+@x y Pred3(x,y) => (Pred4(x,y) & Pred4(y,x))
 @x y (Pred5(x) & Pred4(x,y) & Pred2(y)) => Pred6(x,y)
 @x y z (Pred3(x,y) & Pred3(y,z)) => Pred3(x,z)
 Pred1(M)
