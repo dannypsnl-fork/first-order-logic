@@ -3,8 +3,8 @@ package fol;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class Implication implements FOL {
-    private final FOL left;
-    private final FOL right;
+    public final FOL left;
+    public final FOL right;
 
     public Implication(FOL left, FOL right) {
         this.left = left;
@@ -13,6 +13,6 @@ public class Implication implements FOL {
 
     @Override
     public String toString() {
-               return left.toString() + " => " + right.toString();
+        return left.toString() + " => " + right.toString();
     }
 }

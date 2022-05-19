@@ -3,8 +3,8 @@ package fol;
 import java.util.List;
 
 public class Exists implements FOL {
-    private final List<String> vars;
-    private final FOL body;
+    public final List<String> vars;
+    public final FOL body;
 
     public Exists(List<String> vars, FOL body) {
         this.vars = vars;
