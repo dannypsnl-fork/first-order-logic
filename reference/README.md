@@ -1,0 +1,22 @@
+# reference implementation
+
+This is a reference implementation for Java program written in Racket and use some powerful tools like [**nanopass**](https://github.com/nanopass/nanopass-framework-racket).
+
+### convert First Order Logic to Conjunctive Normal Form
+
+1. remove implication, which means $P \Rightarrow Q$ goes to $\lnot P \lor Q$
+2. move $\lnot$ into quantifier($\forall$ and $\exists$)
+
+   1. $\lnot \forall x. E$ goes to $\exists x. \lnot E$
+   2. $\lnot \exists x. E$ goes to $\forall x. \lnot E$
+   3. and we would like to simplify $\lnot$ to the innest expression
+
+3. skolem: Here we are going to remove $\exists$ expression, by adding **Skolem** function on to those variables hold by $\exists$. The form like $\exists x. P(x)$ goes to $P(Skolem1(x))$
+
+4. remove quantifier $\forall$ since all rest variables is hold by $\forall$. Thus, $\forall x. E$ goes to $E$
+
+5. Finally, we redistribute $\land$. The form $(P \land Q) \lor R$ goes to $(P \lor R) \land (Q \lor R)$
+
+### Resolution
+
+TODO
