@@ -1,4 +1,6 @@
 package cnf;
 
-public interface CNF {
+import fol.FOL;
+
+public interface CNF extends FOL {
 }
