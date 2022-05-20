@@ -4,8 +4,13 @@ This is a reference implementation for Java program written in Racket and use so
 
 ### convert First Order Logic to Conjunctive Normal Form
 
-1. remove implication, which means $P \Rightarrow Q$ goes to $\lnot P \lor Q$
-2. move $\lnot$ into quantifier($\forall$ and $\exists$)
+Quantifiers: $\forall$ and $\exists$
+
+1. remove implication, which means
+
+$P \Rightarrow Q$ goes to $\lnot P \lor Q$
+
+2. move **not** into quantifier scope
 
 First: $\lnot \forall x. E$ goes to $\exists x. \lnot E$
 
