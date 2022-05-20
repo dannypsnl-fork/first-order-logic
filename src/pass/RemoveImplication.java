@@ -1,29 +1,31 @@
+package pass;
+
 import fol.*;
 
-public class Transformer {
-    public FOL remove_implication(FOL expr) {
+public class RemoveImplication {
+    public FOL pass(FOL expr) {
         return switch (expr) {
             case Implication impl -> new Or(
-                    new Not(remove_implication(impl.left)), remove_implication(impl.right)
+                    new Not(pass(impl.left)), pass(impl.right)
             );
             case Or or -> new Or(
-                    remove_implication(or.left),
-                    remove_implication(or.right)
+                    pass(or.left),
+                    pass(or.right)
             );
             case And and -> new And(
-                    remove_implication(and.left),
-                    remove_implication(and.right)
+                    pass(and.left),
+                    pass(and.right)
             );
             case Not not -> new Not(
-                    remove_implication(not.expr)
+                    pass(not.expr)
             );
             case Forall fol -> new Forall(
                     fol.vars,
-                    remove_implication(fol.body)
+                    pass(fol.body)
             );
             case Exists exists -> new Exists(
                     exists.vars,
-                    remove_implication(exists.body)
+                    pass(exists.body)
             );
             default -> throw new IllegalStateException("Unexpected value: " + expr);
         };
