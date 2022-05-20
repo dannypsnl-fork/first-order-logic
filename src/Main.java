@@ -4,8 +4,10 @@ import fol.parser.FolLexer;
 import fol.parser.FolParser;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.util.Collections;
+import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
@@ -20,7 +22,7 @@ class FOLBuildVisitor extends FolBaseVisitor<FOL> {
             Collections.reverse(qs);
             FOL cumulative = new Implication(visitTerm(ctx.term(0)), visitTerm(ctx.term(1)));
             for (var q : qs) {
-                var vars = q.VAR().stream().map((v) -> v.getText()).collect(toList());
+                var vars = buildVars(q.vars());
                 switch (q.op.getText()) {
                     case "@" -> cumulative = new Forall(vars, cumulative);
                     case "#" -> cumulative = new Exists(vars, cumulative);
@@ -33,6 +35,10 @@ class FOLBuildVisitor extends FolBaseVisitor<FOL> {
     @Override
     public FOL visitTerm(FolParser.TermContext ctx) {
         return new Term();
+    }
+
+    public List<String> buildVars(FolParser.VarsContext ctx) {
+        return ctx.VAR().stream().map(ParseTree::getText).collect(toList());
     }
 }
 

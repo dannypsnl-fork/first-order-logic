@@ -11,7 +11,11 @@ term :
   | '(' term ')'
   | CONST '(' (VAR|CONST) (',' (VAR|CONST))* ')'
   ;
-quantifier : op=(FORALL|EXISTS) VAR+
+quantifier : op=(FORALL|EXISTS) vars
+  ;
+vars :
+    VAR+
+  | VAR (',' VAR)* ','?
   ;
 
 FORALL : '@' ;
