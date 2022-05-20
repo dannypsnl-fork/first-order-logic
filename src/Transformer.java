@@ -1,22 +1,31 @@
-import cnf.CNF;
-import cnf.Not;
-import cnf.Or;
-import fol.Exists;
-import fol.FOL;
-import fol.Forall;
-import fol.Implication;
+import fol.*;
 
 public class Transformer {
-    public CNF transform(FOL fol) {
-        return switch (fol) {
-            case Forall forall -> transform(forall.body);
-            case Exists exists -> transform(exists.body);
+    public FOL remove_implication(FOL expr) {
+        return switch (expr) {
             case Implication impl -> new Or(
-                    new Not(transform(impl.left)),
-                    transform(impl.right)
+                    new Not(remove_implication(impl.left)), remove_implication(impl.right)
             );
-            default -> throw new IllegalStateException("Unexpected value: " + fol);
+            case Or or -> new Or(
+                    remove_implication(or.left),
+                    remove_implication(or.right)
+            );
+            case And and -> new And(
+                    remove_implication(and.left),
+                    remove_implication(and.right)
+            );
+            case Not not -> new Not(
+                    remove_implication(not.expr)
+            );
+            case Forall fol -> new Forall(
+                    fol.vars,
+                    remove_implication(fol.body)
+            );
+            case Exists exists -> new Exists(
+                    exists.vars,
+                    remove_implication(exists.body)
+            );
+            default -> throw new IllegalStateException("Unexpected value: " + expr);
         };
     }
-
 }
