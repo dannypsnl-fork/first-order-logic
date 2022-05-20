@@ -46,14 +46,14 @@
          `(,(replace v) ,(map replace v*) ...)]))
 (define-pass skolem : FOL (e) -> FOL ()
   (Expr : Expr (e) -> Expr ()
-        [(∃ (,v ...) ,e)
+        [(∃ (,v ...) ,[e])
          (define vs (map (λ (v) (gensym 'Skolem)) v))
          (subst e (zip v vs))])
   (Expr e))
 
 (define-pass remove-∀ : FOL (e) -> FOL ()
   (Expr : Expr (e) -> Expr ()
-        [(∀ (,v ...) ,e) e]))
+        [(∀ (,v ...) ,[e]) e]))
 
 (define-pass distribute-and : FOL (e) -> FOL ()
   (Expr : Expr (e) -> Expr ()
