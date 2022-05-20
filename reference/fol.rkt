@@ -70,13 +70,13 @@
 (define-pass convert->CNF : FOL (e) -> CNF ()
   (Expr : Expr (e) -> Expr ()))
 
-(define-parser parse-FOL FOL)
 (define target '(∀ (x)
                    (->> (∀ (y) (->> (Animal y)
                                     (Loves x y)))
                         (∃ (y) (Loves y x)))))
 
 (define (fol->cnf e)
+  (define-parser parse-FOL FOL)
   ((compose convert->CNF
             distribute-and
             remove-∀
