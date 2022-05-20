@@ -57,7 +57,10 @@
 
 (define-pass distribute-and : FOL (e) -> FOL ()
   (Expr : Expr (e) -> Expr ()
-        [(or (and ,e0 ,e1) ,e2)
+        [(or (and ,[e0] ,[e1]) ,[e2])
+         `(and (or ,e0 ,e2)
+               (or ,e1 ,e2))]
+        [(or ,[e2] (and ,[e0] ,[e1]))
          `(and (or ,e0 ,e2)
                (or ,e1 ,e2))]))
 
