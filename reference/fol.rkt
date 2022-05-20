@@ -86,26 +86,43 @@
   (Expr (e)
         (- (∀ (v ...) e)
            (∃ (v ...) e)
-           (->> e0 e1))))
+           (->> e0 e1)
+           (or e0 e1)
+           (and e0 e1))
+        (+ (or e ...)
+           (and e ...))))
 (define-pass convert->CNF : FOL (e) -> CNF ()
-  (Expr : Expr (e) -> Expr ()))
+  (Expr : Expr (e) -> Expr ()
+        [(or ,[e0] ,[e1]) `(or ,e0 ,e1)]
+        [(and ,[e0] ,[e1]) `(and ,e0 ,e1)]))
 
-(define target '(∀ (x)
-                   (->> (∀ (y) (->> (Animal y)
-                                    (Loves x y)))
-                        (∃ (y) (Loves y x)))))
+(define-pass compact-and/or : CNF (e) -> CNF ()
+  (Expr : Expr (e) -> Expr ()
+        [(or (or ,[e0] ,[e1]) ,[e2]) `(or ,e0 ,e1 ,e2)]
+        [(and (and ,[e0] ,[e1]) ,[e2]) `(and ,e0 ,e1 ,e2)]))
+
+(define-parser parse-CNF CNF)
+(define-pass CNF->clauses : CNF (e) -> * ()
+  (Expr : Expr (e) -> * ()
+        [(or ,e* ...)
+         (apply set-union (map CNF->clauses e*))]
+        [(and ,e* ...)
+         (map CNF->clauses e*)]
+        [(not ,e0) (set (unparse-CNF e))]
+        [(,v ,e* ...) (set (unparse-CNF e))]
+        [,v (set)]))
 
 (define (fol->cnf e)
   (define-parser parse-FOL FOL)
-  (define-parser parse-CNF CNF)
 
   ; optional pass, insert it to any FOL pass can check the convertion result
   (define (print-FOL e)
     (println (unparse-FOL e))
     e)
 
-  ((compose unparse-CNF
+  ((compose CNF->clauses
             ; CNF passes
+            compact-and/or
             convert->CNF
             ; FOL passes
             distribute-and
@@ -119,6 +136,10 @@
             parse-FOL)
    e))
 
+(define target '(∀ (x)
+                   (->> (∀ (y) (->> (Animal y)
+                                    (Loves x y)))
+                        (∃ (y) (Loves y x)))))
 (fol->cnf target)
 
 (define (make-KB rules)
@@ -140,6 +161,6 @@
       (if (subset? new kb)
           (return #f)
           (loop (set-union kb new))))))
-(resolution '((R Apple)
-              (->> (R x) (S x)))
-            '(S apple))
+; (resolution '((R Apple)
+;               (->> (R x) (S x)))
+;             '(S apple))
