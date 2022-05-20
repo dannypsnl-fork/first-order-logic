@@ -77,7 +77,9 @@
 
 (define (fol->cnf e)
   (define-parser parse-FOL FOL)
-  ((compose convert->CNF
+  (define-parser parse-CNF CNF)
+  ((compose unparse-CNF
+            convert->CNF
             distribute-and
             remove-∀
             skolem
@@ -89,3 +91,26 @@
    e))
 
 (fol->cnf target)
+
+(define (make-KB rules)
+  (list->set (map fol->cnf rules)))
+(define (resolve r1 r2)
+  ; TODO: unification on sub rules in r1, r2
+  (println r1)
+  (println r2)
+  (set))
+(define (resolution kb-rules query)
+  (define new '())
+  (let/ec return
+    (let loop ([kb (make-KB kb-rules)])
+      (for ([c (in-combinations (set->list kb) 2)])
+        (define resolvents (resolve (first c) (second c)))
+        (if (set-empty? resolvents)
+            (return #t)
+            (set! new (set-union new resolvents))))
+      (if (subset? new kb)
+          (return #f)
+          (loop (set-union kb new))))))
+(resolution '((R Apple)
+              (->> (R x) (S x)))
+            '(S apple))
