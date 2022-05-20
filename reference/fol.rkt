@@ -15,6 +15,23 @@
         v
         (->> e0 e1)))
 
+(define-pass subst : FOL (e subst-map) -> FOL ()
+  (Expr : Expr (e) -> Expr ()
+        [(,v ,v* ...)
+         (define (replace v)
+           (if (assoc v subst-map)
+               (cdr (assoc v subst-map))
+               v))
+         `(,(replace v) ,(map replace v*) ...)]))
+(define-pass uniquify : FOL (e) -> FOL ()
+  (Expr : Expr (e) -> Expr ()
+        [(∃ (,v ...) ,[e])
+         (define new-vs (map gensym v))
+         `(∃ (,new-vs ...) ,(subst e (zip v new-vs)))]
+        [(∀ (,v ...) ,[e])
+         (define new-vs (map gensym v))
+         `(∀ (,new-vs ...) ,(subst e (zip v new-vs)))]))
+
 (define-pass remove-implication : FOL (e) -> FOL ()
   (Expr : Expr (e) -> Expr ()
         [(->> ,[e0] ,[e1])
@@ -36,7 +53,7 @@
   (Expr : Expr (e) -> Expr ()
         [(not (not ,[e])) e]))
 
-(define-pass subst : FOL (e subst-map) -> FOL ()
+(define-pass subst-skolem : FOL (e subst-map) -> FOL ()
   (Expr : Expr (e) -> Expr ()
         [(,v ,v* ...)
          (define (replace v)
@@ -48,7 +65,7 @@
   (Expr : Expr (e) -> Expr ()
         [(∃ (,v ...) ,[e])
          (define vs (map (λ (v) (gensym 'Skolem)) v))
-         (subst e (zip v vs))])
+         (subst-skolem e (zip v vs))])
   (Expr e))
 
 (define-pass remove-∀ : FOL (e) -> FOL ()
@@ -81,8 +98,16 @@
 (define (fol->cnf e)
   (define-parser parse-FOL FOL)
   (define-parser parse-CNF CNF)
+
+  ; optional pass, insert it to any FOL pass can check the convertion result
+  (define (print-FOL e)
+    (println (unparse-FOL e))
+    e)
+
   ((compose unparse-CNF
+            ; CNF passes
             convert->CNF
+            ; FOL passes
             distribute-and
             remove-∀
             skolem
@@ -90,6 +115,7 @@
             move-in-not-1
             move-in-not
             remove-implication
+            uniquify
             parse-FOL)
    e))
 
