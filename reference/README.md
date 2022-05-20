@@ -7,9 +7,11 @@ This is a reference implementation for Java program written in Racket and use so
 1. remove implication, which means $P \Rightarrow Q$ goes to $\lnot P \lor Q$
 2. move $\lnot$ into quantifier($\forall$ and $\exists$)
 
-   1. $\lnot \forall x. E$ goes to $\exists x. \lnot E$
-   2. $\lnot \exists x. E$ goes to $\forall x. \lnot E$
-   3. and we would like to simplify $\lnot$ to the innest expression
+First: $\lnot \forall x. E$ goes to $\exists x. \lnot E$
+
+Second: $\lnot \exists x. E$ goes to $\forall x. \lnot E$
+
+and we would like to simplify $\lnot$ by swaping it into the innest expression
 
 3. skolem: Here we are going to remove $\exists$ expression, by adding **Skolem** function on to those variables hold by $\exists$. The form like $\exists x. P(x)$ goes to $P(Skolem1(x))$
 
