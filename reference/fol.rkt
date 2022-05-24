@@ -140,7 +140,7 @@
                    (->> (∀ (y) (->> (Animal y)
                                     (Loves x y)))
                         (∃ (y) (Loves y x)))))
-(fol->cnf target)
+; (fol->cnf target)
 
 (define (make-KB rules)
   (list->set (map fol->cnf rules)))
@@ -161,6 +161,6 @@
       (if (subset? new kb)
           (return #f)
           (loop (set-union kb new))))))
-; (resolution '((R Apple)
-;               (->> (R x) (S x)))
-;             '(S apple))
+(resolution '((R Apple)
+              (->> (R x) (S x)))
+            '(S apple))

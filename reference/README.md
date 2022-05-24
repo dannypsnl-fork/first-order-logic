@@ -26,4 +26,6 @@ and we would like to simplify $\lnot$ by swaping it into the innest expression
 
 ### Resolution
 
+Reference: http://logic.stanford.edu/intrologic/notes/chapter_05.html
+
 TODO
