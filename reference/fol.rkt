@@ -153,11 +153,11 @@
       (for ([c (in-combinations (set->list kb) 2)])
         (define resolvents (resolve (first c) (second c)))
         (if (set-empty? resolvents)
-            (return #t)
+            (return 'contradiction)
             (begin
               (set! new (set-union new (set resolvents))))))
       (if (subset? new kb)
-          (return #f)
+          (return 'correct)
           (begin
             (loop (set-union kb new)))))))
 (resolution '((R Apple)
