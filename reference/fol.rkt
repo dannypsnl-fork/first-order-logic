@@ -149,7 +149,8 @@
 (define (resolution kb-rules query)
   (define new (set))
   (let/ec return
-    (let loop ([kb (make-KB kb-rules)])
+    (let loop ([kb (set-add (make-KB kb-rules)
+                            (set `(not ,query)))])
       (for ([c (in-combinations (set->list kb) 2)])
         (define resolvents (resolve (first c) (second c)))
         (if (set-empty? resolvents)
