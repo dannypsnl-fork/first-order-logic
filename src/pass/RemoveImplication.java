@@ -2,7 +2,8 @@ package pass;
 
 import fol.*;
 
-public class RemoveImplication {
+public class RemoveImplication implements Pass {
+    @Override
     public FOL pass(FOL expr) {
         return switch (expr) {
             case Implication impl -> new Or(

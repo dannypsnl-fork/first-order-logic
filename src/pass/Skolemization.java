@@ -12,9 +12,10 @@ import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
 
-public class Skolemization {
+public class Skolemization implements Pass {
     static int skolem_counter = 1;
 
+    @Override
     public FOL pass(FOL expr) {
         return switch (expr) {
             case Or or -> new Or(
