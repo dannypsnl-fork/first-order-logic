@@ -85,6 +85,7 @@ function resolve(r1, r2) {
             resolvent.remove(c2)
         }
     }
+    return resolvent
 }
 ```
 
