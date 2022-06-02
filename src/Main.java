@@ -5,10 +5,7 @@ import fol.parser.FolParser;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import pass.Pass;
-import pass.RemoveForall;
-import pass.RemoveImplication;
-import pass.Skolemization;
+import pass.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -54,13 +51,12 @@ public class Main {
 
         var builder = new FOLBuildVisitor();
 
-        var pass1 = new RemoveImplication();
-        var pass2 = new Skolemization();
-        var pass3 = new RemoveForall();
         Pass[] all_passes = {
-                pass1,
-                pass2,
-                pass3,
+                new RemoveImplication(),
+                new MoveNotIn(),
+                new Skolemization(),
+                new RemoveForall(),
+                new Redistribute(),
         };
         FOL expression = builder.visit(parser.logic());
         for (var pass : all_passes) {
