@@ -55,20 +55,20 @@ $$
 
 ```
 function resolution(KB) {
-    new := set()
+    learned := set()
     loop {
         for (r1, r2) in combinations(set_to_list(KB), 2) {
             resolvent := resolve(r1, r2)
             if is_empty_set(resolvent) {
                 return true
             } else {
-                new.add(resolvent)
+                learned.add(resolvent)
             }
         }
-        if is_subset(new, KB) {
+        if is_subset(learned, KB) {
             return false
         } else {
-            KB = set_union(KB, new)
+            KB = set_union(KB, learned)
         }
     }
 }
