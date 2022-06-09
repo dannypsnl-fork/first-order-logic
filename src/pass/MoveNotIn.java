@@ -6,8 +6,8 @@ public class MoveNotIn implements Pass {
     public FOL pass(FOL expr) {
         return switch (expr) {
             case Not not -> switch (not.expr) {
-                        case Forall forall -> new Exists(forall.vars, pass(new Not(forall.body)));
-                        case Exists exists -> new Forall(exists.vars, pass(new Not(exists.body)));
+                        case Forall forall -> new Exists(forall.vars, pass(new Not(pass(forall.body))));
+                        case Exists exists -> new Forall(exists.vars, pass(new Not(pass(exists.body))));
                         case Not inner_not -> pass(inner_not.expr);
                         default -> new Not(pass(not.expr));
                     };

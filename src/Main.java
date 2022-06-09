@@ -34,12 +34,45 @@ class FOLBuildVisitor extends FolBaseVisitor<FOL> {
     }
 
     @Override
-    public FOL visitTerm(FolParser.TermContext ctx) {
-        return new Term();
+    public FOL visitAnd(FolParser.AndContext ctx) {
+        return new And(visit(ctx.term(0)), visit((ctx.term(1))));
     }
 
-    public List<String> buildVars(FolParser.VarsContext ctx) {
-        return ctx.VAR().stream().map(ParseTree::getText).collect(toList());
+    @Override
+    public FOL visitOr(FolParser.OrContext ctx) {
+        return new Or(visit((ctx.term(0))), visit((ctx.term(1))));
+    }
+
+    @Override
+    public FOL visitEq(FolParser.EqContext ctx) {
+        return new Eq(visit((ctx.term(0))), visit((ctx.term(1))));
+    }
+
+    @Override
+    public FOL visitNot(FolParser.NotContext ctx) {
+        return new Not(visit((ctx.term())));
+    }
+
+    @Override
+    public FOL visitWrap(FolParser.WrapContext ctx) {
+        return visit(ctx.term());
+    }
+
+    @Override
+    public FOL visitPredicate(FolParser.PredicateContext ctx) {
+        return new CNFPredicate(
+                ctx.CONST().getText(),
+                ctx.expr().stream().map((v) -> (CNF)visit(v)).toList()
+        );
+    }
+
+    @Override
+    public FOL visitExpr(FolParser.ExprContext ctx) {
+        if (ctx.VAR() != null) {
+            return new Variable(ctx.getText());
+        } else {
+            return new Constant(ctx.getText());
+        }
     }
 }
 

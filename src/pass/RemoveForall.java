@@ -1,4 +1,5 @@
 package pass;
+import cnf.Not;
 import fol.*;
 
 public class RemoveForall implements Pass {

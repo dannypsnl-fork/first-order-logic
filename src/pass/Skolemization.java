@@ -1,11 +1,10 @@
 package pass;
 
-import cnf.CNF;
-import cnf.CNFPredicate;
-import cnf.Skolem;
-import cnf.Variable;
+import cnf.*;
 import fol.*;
-
+import fol.And;
+import fol.Not;
+import fol.Or;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
