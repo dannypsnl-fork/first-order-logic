@@ -1,12 +1,14 @@
 package fol;
 
+import cnf.Variable;
+
 import java.util.List;
 
 public class Forall implements FOL {
     public final FOL body;
-    public final List<String> vars;
+    public final List<Variable> vars;
 
-    public Forall(List<String> vars, FOL body) {
+    public Forall(List<Variable> vars, FOL body) {
         this.vars = vars;
         this.body = body;
     }

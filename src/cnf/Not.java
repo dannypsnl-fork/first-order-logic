@@ -1,6 +1,8 @@
-package fol;
+package cnf;
 
-public class Not implements FOL {
+import fol.FOL;
+
+public class Not implements CNF {
     public FOL expr;
 
     public Not(FOL expr) {
@@ -9,6 +11,6 @@ public class Not implements FOL {
 
     @Override
     public String toString() {
-        return "¬"+ expr.toString();
+        return "¬" + expr.toString();
     }
 }

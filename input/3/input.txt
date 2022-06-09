@@ -1,0 +1,4 @@
+1
+@x ((Pred1(x) => Pred2(x)) => Pred1(x))
+1
+@x Pred1(x)

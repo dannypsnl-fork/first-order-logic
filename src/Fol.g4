@@ -1,23 +1,31 @@
 grammar Fol;
 logic :
-    quantifier+ (term '=>' term)
-  | term
+    FORALL vars logic # forall
+  | EXISTS vars logic # exists
+  | term '=>' term # implication
+  | term # topTerm
   ;
 term :
-    term '&' term
-  | term '|' term
-  | term '=' term
-  | '~' '(' term ')'
-  | '(' term ')'
-  | CONST '(' (VAR|CONST) (',' (VAR|CONST))* ')'
+    term AND term # and
+  | term OR term # or
+  | term EQ term # eq
+  | NOT '(' term ')' # not
+  | '(' term ')' # wrap
+  | CONST '(' expr (',' expr)* ')' # predicate
   ;
-quantifier : op=(FORALL|EXISTS) vars
-  ;
+expr :
+  VAR
+  | CONST ;
+
 vars :
     VAR+
   | VAR (',' VAR)* ','?
   ;
 
+AND : '&';
+OR : '|';
+EQ : '=';
+NOT : '~';
 FORALL : '@' ;
 EXISTS : '#' ;
 VAR : [a-z]+ ;
