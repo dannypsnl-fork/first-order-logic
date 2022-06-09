@@ -49,7 +49,6 @@ public class ToCNF {
         } else if (expr instanceof Not not) {
             return new cnf.Not(pass(not.expr));
         } else {
-            System.out.println(expr);
             return (CNF)expr;
         }
     }
