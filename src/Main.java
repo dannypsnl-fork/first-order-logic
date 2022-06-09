@@ -1,3 +1,7 @@
+import cnf.CNF;
+import cnf.CNFPredicate;
+import cnf.Constant;
+import cnf.Variable;
 import fol.*;
 import fol.parser.FolBaseVisitor;
 import fol.parser.FolLexer;
@@ -5,28 +9,31 @@ import fol.parser.FolParser;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import pass.*;
+import pass.Pass;
 
-import java.util.Collections;
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
+import java.util.*;
+import java.util.stream.Collectors;
 
 class FOLBuildVisitor extends FolBaseVisitor<FOL> {
+    private List<Variable> buildVars(FolParser.VarsContext ctx) {
+        return ctx.VAR().stream().map((v) -> new Variable(v.getText())).collect(Collectors.toList());
+    }
+
     @Override
     public FOL visitLogic(FolParser.LogicContext ctx) {
         if (ctx.quantifier() == null) {
             // only one term
-            return visitTerm(ctx.term(0));
+            return visit(ctx.term(0));
         } else {
             var qs = ctx.quantifier();
             Collections.reverse(qs);
-            FOL cumulative = new Implication(visitTerm(ctx.term(0)), visitTerm(ctx.term(1)));
+            FOL cumulative = new Implication(visit(ctx.term(0)), visit(ctx.term(1)));
             for (var q : qs) {
                 var vars = buildVars(q.vars());
-                switch (q.op.getText()) {
-                    case "@" -> cumulative = new Forall(vars, cumulative);
-                    case "#" -> cumulative = new Exists(vars, cumulative);
+                if (q.FORALL() != null) {
+                    cumulative = new Forall(vars, cumulative);
+                } else if (q.EXISTS() != null) {
+                    cumulative = new Exists(vars, cumulative);
                 }
             }
             return cumulative;
@@ -84,17 +91,8 @@ public class Main {
 
         var builder = new FOLBuildVisitor();
 
-        Pass[] all_passes = {
-                new RemoveImplication(),
-                new MoveNotIn(),
-                new Skolemization(),
-                new RemoveForall(),
-                new Redistribute(),
-        };
-        FOL expression = builder.visit(parser.logic());
-        for (var pass : all_passes) {
-            expression = pass.pass(expression);
-        }
-        System.out.println(expression);
+        var expression = builder.visit(parser.logic());
+        CNF result = Pass.all(expression);
+        System.out.println(result);
     }
 }

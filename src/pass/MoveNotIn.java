@@ -1,5 +1,7 @@
 package pass;
 
+import cnf.Not;
+import cnf.Variable;
 import fol.*;
 public class MoveNotIn implements Pass {
     @Override
@@ -15,7 +17,8 @@ public class MoveNotIn implements Pass {
             case And and -> new And(pass(and.left), pass(and.right));
             case Forall forall -> new Forall(forall.vars, pass(forall.body));
             case Exists exists -> new Exists(exists.vars, pass(exists.body));
-            default -> throw new IllegalStateException("Unexpected value: " + expr);
+            case Variable variable -> variable;
+            default -> expr;
         };
     }
 }

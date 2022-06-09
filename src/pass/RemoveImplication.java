@@ -13,7 +13,7 @@ public class RemoveImplication implements Pass {
             case Not not -> new Not(pass(not.expr));
             case Forall fol -> new Forall(fol.vars, pass(fol.body));
             case Exists exists -> new Exists(exists.vars, pass(exists.body));
-            default -> throw new IllegalStateException("Unexpected value: " + expr);
+            default -> expr;
         };
     }
 }

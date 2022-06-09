@@ -6,4 +6,9 @@ public class Not implements FOL {
     public Not(FOL expr) {
         this.expr = expr;
     }
+
+    @Override
+    public String toString() {
+        return "¬"+ expr.toString();
+    }
 }

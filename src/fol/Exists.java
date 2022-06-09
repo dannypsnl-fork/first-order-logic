@@ -1,12 +1,14 @@
 package fol;
 
+import cnf.Variable;
+
 import java.util.List;
 
 public class Exists implements FOL {
-    public final List<String> vars;
+    public final List<Variable> vars;
     public final FOL body;
 
-    public Exists(List<String> vars, FOL body) {
+    public Exists(List<Variable> vars, FOL body) {
         this.vars = vars;
         this.body = body;
     }

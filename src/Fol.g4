@@ -4,13 +4,17 @@ logic :
   | term
   ;
 term :
-    term '&' term
-  | term '|' term
-  | term '=' term
-  | '~' '(' term ')'
-  | '(' term ')'
-  | CONST '(' (VAR|CONST) (',' (VAR|CONST))* ')'
+    term AND term # and
+  | term OR term # or
+  | term EQ term # eq
+  | NOT '(' term ')' # not
+  | '(' term ')' # wrap
+  | CONST '(' expr (',' expr)* ')' # predicate
   ;
+expr :
+  VAR
+  | CONST ;
+
 quantifier : op=(FORALL|EXISTS) vars
   ;
 vars :
@@ -18,6 +22,10 @@ vars :
   | VAR (',' VAR)* ','?
   ;
 
+AND : '&';
+OR : '|';
+EQ : '=';
+NOT : '~';
 FORALL : '@' ;
 EXISTS : '#' ;
 VAR : [a-z]+ ;

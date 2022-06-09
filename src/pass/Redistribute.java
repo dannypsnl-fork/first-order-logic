@@ -1,4 +1,6 @@
 package pass;
+import cnf.Not;
+import cnf.Variable;
 import fol.*;
 
 public class Redistribute implements Pass {
@@ -28,7 +30,12 @@ public class Redistribute implements Pass {
             case Not not -> {
                 return new Not(pass(not.expr));
             }
-            default -> throw new IllegalStateException("Unexpected value: " + expr);
+            case Variable variable -> {
+                return variable;
+            }
+            default -> {
+                return expr;
+            }
         }
     }
 }

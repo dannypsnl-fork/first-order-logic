@@ -1,7 +1,5 @@
 package fol;
 
-import java.util.concurrent.ConcurrentLinkedDeque;
-
 public class Implication implements FOL {
     public final FOL left;
     public final FOL right;
