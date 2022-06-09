@@ -1,0 +1,5 @@
+2
+(#x ~Pred1(x)) => (@y Pred2(y))
+~Pred1(A)
+1
+@x Pred2(x)
