@@ -15,7 +15,9 @@ public class ToCNF {
                         .stream().flatMap(List::stream)
                         .collect(Collectors.toList());
             }
-            case cnf.And _and -> throw new IllegalStateException("no and should still in or in this stage");
+            case cnf.And and -> {
+                return flat_and(and);
+            }
             default -> {
                 return List.of(pass(expr));
             }
@@ -30,7 +32,9 @@ public class ToCNF {
                         .stream().flatMap(List::stream)
                         .collect(Collectors.toList());
             }
-            case cnf.Or _or -> throw new IllegalStateException("no and should still in or in this stage");
+            case cnf.Or or -> {
+                return flat_or(or);
+            }
             default -> {
                 return List.of(pass(expr));
             }

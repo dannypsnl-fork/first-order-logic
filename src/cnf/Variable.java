@@ -11,7 +11,7 @@ public class Variable implements CNF {
 
     @Override
     public String toString() {
-        return name;
+        return "?" + name;
     }
 
     @Override

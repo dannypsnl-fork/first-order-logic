@@ -1,7 +1,7 @@
 grammar Fol;
 logic :
-    quantifier+ (term '=>' term)
-  | term
+    quantifier+ (term '=>' term) # topQuantifier
+  | term # topTerm
   ;
 term :
     term AND term # and

@@ -9,6 +9,6 @@ public class Constant implements CNF {
 
     @Override
     public String toString() {
-        return "@"+c;
+        return c;
     }
 }

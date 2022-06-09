@@ -18,7 +18,7 @@ public class RemoveForall implements Pass {
             case Not not -> new Not(
                     pass(not.expr)
             );
-            default -> throw new IllegalStateException("Unexpected value: " + expr);
+            default -> expr;
         };
     }
 }

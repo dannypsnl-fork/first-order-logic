@@ -11,6 +11,10 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import pass.Pass;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -20,24 +24,24 @@ class FOLBuildVisitor extends FolBaseVisitor<FOL> {
     }
 
     @Override
-    public FOL visitLogic(FolParser.LogicContext ctx) {
-        if (ctx.quantifier() == null) {
-            // only one term
-            return visit(ctx.term(0));
-        } else {
-            var qs = ctx.quantifier();
-            Collections.reverse(qs);
-            FOL cumulative = new Implication(visit(ctx.term(0)), visit(ctx.term(1)));
-            for (var q : qs) {
-                var vars = buildVars(q.vars());
-                if (q.FORALL() != null) {
-                    cumulative = new Forall(vars, cumulative);
-                } else if (q.EXISTS() != null) {
-                    cumulative = new Exists(vars, cumulative);
-                }
+    public FOL visitTopQuantifier(FolParser.TopQuantifierContext ctx) {
+        var qs = ctx.quantifier();
+        Collections.reverse(qs);
+        FOL cumulative = new Implication(visit(ctx.term(0)), visit(ctx.term(1)));
+        for (var q : qs) {
+            var vars = buildVars(q.vars());
+            if (q.FORALL() != null) {
+                cumulative = new Forall(vars, cumulative);
+            } else if (q.EXISTS() != null) {
+                cumulative = new Exists(vars, cumulative);
             }
-            return cumulative;
         }
+        return cumulative;
+    }
+
+    @Override
+    public FOL visitTopTerm(FolParser.TopTermContext ctx) {
+        return visit(ctx.term());
     }
 
     @Override
@@ -84,15 +88,52 @@ class FOLBuildVisitor extends FolBaseVisitor<FOL> {
 }
 
 public class Main {
-    public static void main(String[] args) {
-        var input = "@x #y Pred1(x) => Pred2(x, y)";
-        var lexer = new FolLexer(new ANTLRInputStream(input));
+    static void handleFile(String path) {
+        List<CNF> knowledge_base = new ArrayList<>();
+        List<CNF> queries = new ArrayList<>();
+        var counter = 0;
+        try {
+            var buf = new BufferedReader(new FileReader(path));
+            String line = buf.readLine();
+            while (line != null) {
+                try {
+                    Integer.parseInt(line);
+                    counter += 1;
+                } catch (NumberFormatException e) {
+                    var logic = fromStatement(line);
+                    if (counter == 2) {
+                        queries.add(Pass.all(logic));
+                    } else {
+                        knowledge_base.add(Pass.all(logic));
+                    }
+                }
+                line = buf.readLine();
+            }
+            buf.close();
+
+            System.out.println("Queries:");
+            for (CNF cnf : queries) {
+                System.out.println(cnf);
+            }
+
+            System.out.println("Knowledge Base:");
+            for (CNF cnf : knowledge_base) {
+                System.out.println(cnf);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static FOL fromStatement(String statement) {
+        var lexer = new FolLexer(new ANTLRInputStream(statement));
         var parser = new FolParser(new CommonTokenStream(lexer));
-
         var builder = new FOLBuildVisitor();
+        return builder.visit(parser.logic());
+    }
 
-        var expression = builder.visit(parser.logic());
-        CNF result = Pass.all(expression);
-        System.out.println(result);
+    public static void main(String[] args) {
+        handleFile("./input/1/input.txt");
+        handleFile("./input/2/input.txt");
     }
 }
