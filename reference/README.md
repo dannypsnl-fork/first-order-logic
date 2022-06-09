@@ -12,11 +12,11 @@ Quantifiers: $\forall$ and $\exists$
 
    $P \Rightarrow Q$ goes to $\lnot P \lor Q$
 
-2. move **not** in, we would like to simplify $\lnot$ by swaping it into the innest expression.
+2. move **not** in, we would like to simplify $\lnot$ by swapping it into the innermost expression.
 
    1. $\lnot \forall x. E$ goes to $\exists x. \lnot E$
    2. $\lnot \exists x. E$ goes to $\forall x. \lnot E$
-   3. $\lnot \lnot E$ goest to $E$
+   3. $\lnot \lnot E$ goes to $E$
 
 3. skolem: Here we are going to remove $\exists$ expression, by adding **Skolem** function on to those variables hold by $\exists$.
 
@@ -26,7 +26,7 @@ Quantifiers: $\forall$ and $\exists$
 
    $\forall x. E$ goes to $E$
 
-5. Finally, we redistribute $\land$, the target is $\land$ is at outest and no nested same form inside of any clause.
+5. Finally, we redistribute $\land$, the target is $\land$ is at outermost and no nested same form inside of any clause.
    1. $(P \land Q) \lor R$ goes to $(P \lor R) \land (Q \lor R)$
    2. $R \lor (P \land Q)$ goes to $(R \lor P) \land (R \lor Q)$
    3. $(P \lor Q) \lor R$ goes to $P \lor Q \lor R$
@@ -34,7 +34,7 @@ Quantifiers: $\forall$ and $\exists$
 
 ### Resolution
 
-Now, we already have only form like `(and (or ...) ...)`, I mean $\land$ must in the outest and $\lor$ in the innest. So we convert $\lor$ to a set of it's body, and $\land$ as set of $\lor$ sets. It called our knowledge base(for short called `KB` in code), with it, we can write down general resolution:
+Now, we already have only form like `(and (or ...) ...)`, I mean $\land$ must in the outermost and $\lor$ in the innermost. So we convert $\lor$ to a set of it's body, and $\land$ as set of $\lor$ sets. It called our knowledge base(for short called `KB` in code), with it, we can write down general resolution:
 
 #### example about CNF to set
 
@@ -55,20 +55,20 @@ $$
 
 ```
 function resolution(KB) {
-    new := set()
+    learned := set()
     loop {
         for (r1, r2) in combinations(set_to_list(KB), 2) {
             resolvent := resolve(r1, r2)
             if is_empty_set(resolvent) {
                 return true
             } else {
-                new.add(resolvent)
+                learned.add(resolvent)
             }
         }
-        if is_subset(new, KB) {
+        if is_subset(learned, KB) {
             return false
         } else {
-            KB = set_union(KB, new)
+            KB = set_union(KB, learned)
         }
     }
 }
@@ -85,6 +85,7 @@ function resolve(r1, r2) {
             resolvent.remove(c2)
         }
     }
+    return resolvent
 }
 ```
 

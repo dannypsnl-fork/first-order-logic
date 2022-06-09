@@ -1,6 +1,8 @@
 grammar Fol;
 logic :
-    quantifier+ (term '=>' term) # topQuantifier
+    FORALL vars logic # forall
+  | EXISTS vars logic # exists
+  | term '=>' term # implication
   | term # topTerm
   ;
 term :
@@ -15,8 +17,6 @@ expr :
   VAR
   | CONST ;
 
-quantifier : op=(FORALL|EXISTS) vars
-  ;
 vars :
     VAR+
   | VAR (',' VAR)* ','?

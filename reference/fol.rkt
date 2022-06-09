@@ -2,34 +2,40 @@
 (require nanopass
          (only-in list-util zip))
 
+(define variable? string?)
 (define-language FOL
   (terminals
-   (symbol (v)))
+   (symbol (c))
+   (variable (v)))
   (Expr (e)
         (∀ (v ...) e)
         (∃ (v ...) e)
         (or e0 e1)
         (and e0 e1)
         (not e)
-        (v e ...)
+        (c e ...)
         v
+        c
         (->> e0 e1)))
 
 (define-pass subst : FOL (e subst-map) -> FOL ()
   (Expr : Expr (e) -> Expr ()
-        [(,v ,v* ...)
+        [(,c ,v* ...)
          (define (replace v)
            (if (assoc v subst-map)
                (cdr (assoc v subst-map))
                v))
-         `(,(replace v) ,(map replace v*) ...)]))
+         `(,(replace c) ,(map replace v*) ...)]))
 (define-pass uniquify : FOL (e) -> FOL ()
+  (definitions
+    (define (gen-newvs vs)
+      (map (compose symbol->string gensym) vs)))
   (Expr : Expr (e) -> Expr ()
         [(∃ (,v ...) ,[e])
-         (define new-vs (map gensym v))
+         (define new-vs (gen-newvs v))
          `(∃ (,new-vs ...) ,(subst e (zip v new-vs)))]
         [(∀ (,v ...) ,[e])
-         (define new-vs (map gensym v))
+         (define new-vs (gen-newvs v))
          `(∀ (,new-vs ...) ,(subst e (zip v new-vs)))]))
 
 (define-pass remove-implication : FOL (e) -> FOL ()
@@ -55,12 +61,12 @@
 
 (define-pass subst-skolem : FOL (e subst-map) -> FOL ()
   (Expr : Expr (e) -> Expr ()
-        [(,v ,v* ...)
+        [(,c ,v* ...)
          (define (replace v)
            (if (assoc v subst-map)
                `(,(cdr (assoc v subst-map)) ,v)
                v))
-         `(,(replace v) ,(map replace v*) ...)]))
+         `(,(replace c) ,(map replace v*) ...)]))
 (define-pass skolem : FOL (e) -> FOL ()
   (Expr : Expr (e) -> Expr ()
         [(∃ (,v ...) ,[e])
@@ -101,7 +107,6 @@
         [(or (or ,[e0] ,[e1]) ,[e2]) `(or ,e0 ,e1 ,e2)]
         [(and (and ,[e0] ,[e1]) ,[e2]) `(and ,e0 ,e1 ,e2)]))
 
-(define-parser parse-CNF CNF)
 (define-pass CNF->clauses : CNF (e) -> * ()
   (Expr : Expr (e) -> * ()
         [(or ,e* ...)
@@ -109,8 +114,9 @@
         [(and ,e* ...)
          (map CNF->clauses e*)]
         [(not ,e0) (set (unparse-CNF e))]
-        [(,v ,e* ...) (set (unparse-CNF e))]
-        [,v (set)]))
+        [(,c ,e* ...) (set (unparse-CNF e))]
+        [,v (set)]
+        [,c (set)]))
 
 (define (fol->cnf e)
   (define-parser parse-FOL FOL)
@@ -131,22 +137,31 @@
             parse-FOL)
    e))
 
-(define target '(∀ (x)
-                   (->> (∀ (y) (->> (Animal y)
-                                    (Loves x y)))
-                        (∃ (y) (Loves y x)))))
-; (fol->cnf target)
+(define (occurs? v expr)
+  (if (> (length expr) 0)
+      (member v expr)
+      #f))
+(define (match? r1 r2)
+  ; TODO
+  (cond
+    [(variable? r1)
+     (if (occurs? r1 r2)
+         (error 'occurs)
+         (cons r1 r2))]
+    [(variable? r2) (match? r2 r1)]
+    [else #f
+          ]))
 
-(define (make-KB rules)
-  (list->set (map fol->cnf rules)))
 (define (resolve r1 r2)
   (define resolvents (set-union r1 r2))
   (for/fold ([rs resolvents])
             ([c (in-combinations (set->list resolvents) 2)])
-    (if (equal? `(not ,(first c)) (second c))
+    (if (match? `(not ,(first c)) (second c))
         (set-remove (set-remove rs (first c))(second c))
         rs)))
 (define (resolution kb-rules query)
+  (define (make-KB rules)
+    (list->set (map fol->cnf rules)))
   (define new (set))
   (let/ec return
     (let loop ([kb (set-add (make-KB kb-rules)
@@ -161,6 +176,20 @@
           (return 'correct)
           (begin
             (loop (set-union kb new)))))))
-(resolution '((R Apple)
-              (->> (R Apple) (S Apple)))
-            '(S apple))
+(module+ main
+  (resolution '((Red Apple)
+                (∀ ("x")
+                   (->> (Red "x") (Sweet "x"))))
+              '(Sweet Apple)))
+
+(module+ test
+  (require rackunit)
+
+  (define target '(∀ ("x")
+                     (->> (∀ ("y") (->> (Animal "y")
+                                        (Loves "x" "y")))
+                          (∃ ("y") (Loves "y" "x")))))
+
+  (check-pred
+   (λ (l) (= 2 (length l)))
+   (fol->cnf target)))
