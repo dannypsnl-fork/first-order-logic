@@ -24,49 +24,45 @@ class FOLBuildVisitor extends FolBaseVisitor<FOL> {
     }
 
     @Override
-    public FOL visitTopQuantifier(FolParser.TopQuantifierContext ctx) {
-        var qs = ctx.quantifier();
-        Collections.reverse(qs);
-        FOL cumulative = new Implication(visit(ctx.term(0)), visit(ctx.term(1)));
-        for (var q : qs) {
-            var vars = buildVars(q.vars());
-            if (q.FORALL() != null) {
-                cumulative = new Forall(vars, cumulative);
-            } else if (q.EXISTS() != null) {
-                cumulative = new Exists(vars, cumulative);
-            }
-        }
-        return cumulative;
+    public FOL visitForall(FolParser.ForallContext ctx) {
+        var vars = buildVars(ctx.vars());
+        return new Forall(vars, visit(ctx.logic()));
     }
 
     @Override
-    public FOL visitTopTerm(FolParser.TopTermContext ctx) {
-        return visit(ctx.term());
+    public FOL visitExists(FolParser.ExistsContext ctx) {
+        var vars = buildVars(ctx.vars());
+        return new Exists(vars, visit(ctx.logic()));
+    }
+
+    @Override
+    public FOL visitImplication(FolParser.ImplicationContext ctx) {
+        return new Implication(visit(ctx.logic(0)), visit(ctx.logic((1))));
     }
 
     @Override
     public FOL visitAnd(FolParser.AndContext ctx) {
-        return new And(visit(ctx.term(0)), visit((ctx.term(1))));
+        return new And(visit(ctx.logic(0)), visit((ctx.logic(1))));
     }
 
     @Override
     public FOL visitOr(FolParser.OrContext ctx) {
-        return new Or(visit((ctx.term(0))), visit((ctx.term(1))));
+        return new Or(visit((ctx.logic(0))), visit((ctx.logic(1))));
     }
 
     @Override
     public FOL visitEq(FolParser.EqContext ctx) {
-        return new Eq(visit((ctx.term(0))), visit((ctx.term(1))));
+        return new Eq(visit((ctx.logic(0))), visit((ctx.logic(1))));
     }
 
     @Override
     public FOL visitNot(FolParser.NotContext ctx) {
-        return new Not(visit((ctx.term())));
+        return new Not(visit((ctx.logic())));
     }
 
     @Override
     public FOL visitWrap(FolParser.WrapContext ctx) {
-        return visit(ctx.term());
+        return visit(ctx.logic());
     }
 
     @Override

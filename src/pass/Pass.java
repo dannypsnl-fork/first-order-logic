@@ -12,6 +12,7 @@ public interface Pass {
                   new MoveNotIn(),
                   new Skolemization(),
                   new RemoveForall(),
+                  new VerifyRemoveForall(),
                   new Redistribute(),
           };
           for (var pass : all_passes) {

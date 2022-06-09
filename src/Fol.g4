@@ -1,18 +1,16 @@
 grammar Fol;
 logic :
-    FORALL vars logic # forall
+    CONST '(' expr (',' expr)* ')' # predicate
+  | '(' logic ')' # wrap
+  | NOT '(' logic ')' # not
+  | logic OR logic # or
+  | logic AND logic # and
+  | logic EQ logic # eq
+  | logic '=>' logic # implication
+  | FORALL vars logic # forall
   | EXISTS vars logic # exists
-  | term '=>' term # implication
-  | term # topTerm
   ;
-term :
-    term AND term # and
-  | term OR term # or
-  | term EQ term # eq
-  | NOT '(' term ')' # not
-  | '(' term ')' # wrap
-  | CONST '(' expr (',' expr)* ')' # predicate
-  ;
+
 expr :
   VAR
   | CONST ;
