@@ -1,10 +1,10 @@
 grammar Fol;
 logic :
-    term # termInLogic
-  | 'False' # false
-  | 'True' # true
+    FALSE # false
+  | TRUE # true
+  | term # termInLogic
   | '(' logic ')' # wrap
-  | NOT '(' logic ')' # not
+  | NOT logic # not
   | logic OR logic # or
   | logic AND logic # and
   | logic IMPL logic # implication
@@ -17,6 +17,8 @@ term :
   | VAR # variable
   ;
 
+TRUE : 'True';
+FALSE : 'False';
 AND : '∧'|'and';
 OR : '∨'|'or';
 NOT : '¬'|'not';
