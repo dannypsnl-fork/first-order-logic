@@ -11,8 +11,8 @@ logic :
   ;
 
 term :
-    VAR # variable
-  | VAR '(' term* ')' # predicate
+    VAR '(' term* ')' # predicate
+  | VAR # variable
   ;
 
 AND : '∧'|'and';
