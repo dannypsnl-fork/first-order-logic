@@ -5,7 +5,6 @@ logic :
   | NOT '(' logic ')' # not
   | logic OR logic # or
   | logic AND logic # and
-  | logic EQ logic # eq
   | logic IMPL logic # implication
   | FORALL VAR+ logic # forall
   | EXISTS VAR+ logic # exists
@@ -18,7 +17,6 @@ term :
 
 AND : '∧'|'and';
 OR : '∨'|'or';
-EQ : '=';
 NOT : '¬'|'not';
 IMPL : '→'|'=>';
 FORALL : '∀'|'forall';
