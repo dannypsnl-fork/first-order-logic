@@ -3,48 +3,36 @@ import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.kmu.fol.parser.{FolLexer, FolParser}
 
 class BuildVisitorSuite extends munit.FunSuite:
-  def parseString(s: String): FolParser =
-    val stream = CharStreams.fromString(s)
-    val lex = FolLexer(stream)
-    val tokens = CommonTokenStream(lex)
-    FolParser(tokens)
-
   test("constant") {
-    val parser = parseString("X()")
-    assertEquals(BuildVisitor.visit(parser.logic()), Constant("X"))
+    assertEquals(BuildVisitor.buildLogicFromString("X()"), Constant("X"))
   }
   test("predicate") {
-    val parser = parseString("D(x)")
     assertEquals(
-      BuildVisitor.visit(parser.logic()),
+      BuildVisitor.buildLogicFromString("D(x)"),
       Predicate("D", Variable("x"))
     )
   }
   test("and") {
-    val parser = parseString("a and b")
     assertEquals(
-      BuildVisitor.visit(parser.logic()),
+      BuildVisitor.buildLogicFromString("a and b"),
       And(Variable("a"), Variable("b"))
     )
   }
   test("or") {
-    val parser = parseString("A or B or C")
     assertEquals(
-      BuildVisitor.visit(parser.logic()),
+      BuildVisitor.buildLogicFromString("A or B or C"),
       Or(Or(Variable("A"), Variable("B")), Variable("C"))
     )
   }
   test("not") {
-    val parser = parseString("not not A")
     assertEquals(
-      BuildVisitor.visit(parser.logic()),
+      BuildVisitor.buildLogicFromString("not not A"),
       Not(Not(Variable("A")))
     )
   }
   test("implication") {
-    val parser = parseString("A => B")
     assertEquals(
-      BuildVisitor.visit(parser.logic()),
+      BuildVisitor.buildLogicFromString("A => B"),
       Implication(
         Variable("A"),
         Variable("B")
@@ -52,9 +40,8 @@ class BuildVisitorSuite extends munit.FunSuite:
     )
   }
   test("forall exists mixing") {
-    val parser = parseString("exists x . D(x) => forall y . D(y)")
     assertEquals(
-      BuildVisitor.visit(parser.logic()),
+      BuildVisitor.buildLogicFromString("exists x . D(x) => forall y . D(y)"),
       Exists(
         Seq("x"),
         Implication(
@@ -65,9 +52,8 @@ class BuildVisitorSuite extends munit.FunSuite:
     )
   }
   test("forall exists mixing") {
-    val parser = parseString("exists x . D(x) => (forall y . D(y))")
     assertEquals(
-      BuildVisitor.visit(parser.logic()),
+      BuildVisitor.buildLogicFromString("exists x . D(x) => (forall y . D(y))"),
       Exists(
         Seq("x"),
         Implication(

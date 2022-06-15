@@ -1,15 +1,20 @@
 package org.kmu.fol
 
 trait Logic:
-//  def toClausal(): Logic = {}
   def is_clausal(): Boolean =
     this match
-      case And(_) | Top() => true
-      case _              => is_clause()
+      case Top() => true
+      case And(s*) =>
+        for elem <- s do if !elem.is_clause() then return false
+        true
+      case _ => is_clause()
   def is_clause(): Boolean =
     this match
-      case Or(_) | Bottom() => true
-      case _                => is_literal()
+      case Bottom() => true
+      case Or(s*) =>
+        for elem <- s do if !elem.is_literal() then return false
+        true
+      case _ => is_literal()
   def is_literal(): Boolean =
     this match
       case Variable(_) | Constant(_) | Predicate(_) | Not(_) => true
