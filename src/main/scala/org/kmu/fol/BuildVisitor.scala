@@ -6,10 +6,13 @@ object BuildVisitor extends FolBaseVisitor[Logic]:
   override def visitVariable(ctx: FolParser.VariableContext): Logic =
     Variable(ctx.VAR().getText)
   override def visitPredicate(ctx: FolParser.PredicateContext): Logic =
-    Predicate(
-      ctx.VAR().getText,
-      ctx.term().asScala.toSeq.map(x => visit(x).asInstanceOf[Term])
-    )
+    if ctx.term().size() == 0
+    then Constant(ctx.VAR().getText)
+    else
+      Predicate(
+        ctx.VAR().getText,
+        ctx.term().asScala.toSeq.map(x => visit(x).asInstanceOf[Term])
+      )
   override def visitWrap(ctx: FolParser.WrapContext): Logic = visit(ctx.logic())
   override def visitNot(ctx: FolParser.NotContext): Logic =
     Not(visit(ctx.logic()))
