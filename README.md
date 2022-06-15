@@ -1,3 +1,3 @@
-# first-order-logic
+# first-order logic
 
-A set of fucker
+Resolution of first-order logic
