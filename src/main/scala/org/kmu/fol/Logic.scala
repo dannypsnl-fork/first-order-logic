@@ -9,5 +9,5 @@ case class Not(statement: Logic) extends Logic
 case class Or(subs: Logic*) extends Logic
 case class And(subs: Logic*) extends Logic
 case class Implication(left: Logic, right: Logic) extends Logic
-case class Forall() extends Logic
-case class Exists() extends Logic
+case class Forall(vars: Seq[String], body: Logic) extends Logic
+case class Exists(vars: Seq[String], body: Logic) extends Logic

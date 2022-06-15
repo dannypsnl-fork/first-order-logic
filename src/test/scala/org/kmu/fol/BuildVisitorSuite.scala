@@ -42,12 +42,38 @@ class BuildVisitorSuite extends munit.FunSuite:
     )
   }
   test("implication") {
-    val parser = parseString("D(x) => D(y)")
+    val parser = parseString("A => B")
     assertEquals(
       BuildVisitor.visit(parser.logic()),
       Implication(
-        Predicate("D", Variable("x")),
-        Predicate("D", Variable("y"))
+        Variable("A"),
+        Variable("B")
+      )
+    )
+  }
+  test("forall exists mixing") {
+    val parser = parseString("exists x . D(x) => forall y . D(y)")
+    assertEquals(
+      BuildVisitor.visit(parser.logic()),
+      Exists(
+        Seq("x"),
+        Implication(
+          Predicate("D", Variable("x")),
+          Forall(Seq("y"), Predicate("D", Variable("y")))
+        )
+      )
+    )
+  }
+  test("forall exists mixing") {
+    val parser = parseString("exists x . D(x) => (forall y . D(y))")
+    assertEquals(
+      BuildVisitor.visit(parser.logic()),
+      Exists(
+        Seq("x"),
+        Implication(
+          Predicate("D", Variable("x")),
+          Forall(Seq("y"), Predicate("D", Variable("y")))
+        )
       )
     )
   }

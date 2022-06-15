@@ -6,8 +6,8 @@ logic :
   | logic OR logic # or
   | logic AND logic # and
   | logic IMPL logic # implication
-  | FORALL VAR+ logic # forall
-  | EXISTS VAR+ logic # exists
+  | FORALL VAR+ '.' logic # forall
+  | EXISTS VAR+ '.' logic # exists
   ;
 
 term :

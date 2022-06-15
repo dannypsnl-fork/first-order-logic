@@ -24,6 +24,6 @@ object BuildVisitor extends FolBaseVisitor[Logic]:
   override def visitImplication(ctx: FolParser.ImplicationContext): Logic =
     Implication(visit(ctx.logic(0)), visit(ctx.logic(1)))
   override def visitForall(ctx: FolParser.ForallContext): Logic =
-    Forall()
+    Forall(ctx.VAR().asScala.toSeq.map(x => x.getText), visit(ctx.logic()))
   override def visitExists(ctx: FolParser.ExistsContext): Logic =
-    Exists()
+    Exists(ctx.VAR().asScala.toSeq.map(x => x.getText), visit(ctx.logic()))
