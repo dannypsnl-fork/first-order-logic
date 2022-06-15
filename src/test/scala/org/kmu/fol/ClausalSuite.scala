@@ -8,9 +8,8 @@ class ClausalSuite extends munit.FunSuite:
           "(A and B) or C"
         )
       ),
-      And(
-        Or(Variable("A"), Variable("C")),
-        Or(Variable("B"), Variable("C"))
+      BuildVisitor.buildLogicFromString(
+        "A or C and B or C"
       )
     )
   }
@@ -21,9 +20,8 @@ class ClausalSuite extends munit.FunSuite:
           "C or (A and B)"
         )
       ),
-      And(
-        Or(Variable("C"), Variable("A")),
-        Or(Variable("C"), Variable("B"))
+      BuildVisitor.buildLogicFromString(
+        "C or A and C or B"
       )
     )
   }
