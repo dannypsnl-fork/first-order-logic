@@ -1,6 +1,8 @@
 grammar Fol;
 logic :
     term # termInLogic
+  | 'False' # false
+  | 'True' # true
   | '(' logic ')' # wrap
   | NOT '(' logic ')' # not
   | logic OR logic # or

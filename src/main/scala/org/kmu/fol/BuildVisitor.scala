@@ -1,9 +1,10 @@
 package org.kmu.fol
 import org.kmu.fol.parser.{FolBaseVisitor, FolParser}
-
 import scala.jdk.CollectionConverters.*
 
 object BuildVisitor extends FolBaseVisitor[Logic]:
+  override def visitTrue(ctx: FolParser.TrueContext): Logic = Top()
+  override def visitFalse(ctx: FolParser.FalseContext): Logic = Bottom()
   override def visitVariable(ctx: FolParser.VariableContext): Logic =
     Variable(ctx.VAR().getText)
   override def visitPredicate(ctx: FolParser.PredicateContext): Logic =
