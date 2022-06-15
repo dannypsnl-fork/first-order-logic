@@ -1,5 +1,6 @@
 package org.kmu.fol
 import org.kmu.fol.parser.{FolBaseVisitor, FolParser}
+
 import scala.jdk.CollectionConverters.*
 
 object BuildVisitor extends FolBaseVisitor[Logic]:
@@ -21,7 +22,7 @@ object BuildVisitor extends FolBaseVisitor[Logic]:
   override def visitAnd(ctx: FolParser.AndContext): Logic =
     And(ctx.logic().asScala.toSeq.map(visit)*)
   override def visitImplication(ctx: FolParser.ImplicationContext): Logic =
-    Implication()
+    Implication(visit(ctx.logic(0)), visit(ctx.logic(1)))
   override def visitForall(ctx: FolParser.ForallContext): Logic =
     Forall()
   override def visitExists(ctx: FolParser.ExistsContext): Logic =
