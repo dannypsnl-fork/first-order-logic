@@ -3,6 +3,7 @@ import org.kmu.fol.parser.{FolBaseVisitor, FolParser}
 import scala.jdk.CollectionConverters.*
 
 object BuildVisitor extends FolBaseVisitor[Logic]:
+  override def visitWrap(ctx: FolParser.WrapContext): Logic = visit(ctx.logic())
   override def visitNot(ctx: FolParser.NotContext): Logic =
     Not(visit(ctx.logic()))
   override def visitOr(ctx: FolParser.OrContext): Logic =
