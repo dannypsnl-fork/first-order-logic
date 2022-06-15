@@ -1,14 +1,45 @@
-### IntelliJ IDEA ###
-.idea/
-out/
-!**/src/main/**/out/
-!**/src/test/**/out/
+# bloop and metals
+.bloop
+.bsp
 
-### ANTLR4 ###
-src/fol/parser/
+# metals
+project/metals.sbt
+.metals
 
-### VS Code ###
-.vscode/
+# vs code
+.vscode
 
-### Mac OS ###
+# scala 3
+.tasty
+
+# sbt
+project/project/
+project/target/
+target/
+
+# eclipse
+build/
+.classpath
+.project
+.settings
+.worksheet
+bin/
+.cache
+
+# intellij idea
+*.log
+*.iml
+*.ipr
+*.iws
+.idea
+
+# mac
 .DS_Store
+
+# other?
+.history
+.scala_dependencies
+.cache-main
+
+#general
+*.class

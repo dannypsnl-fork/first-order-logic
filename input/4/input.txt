@@ -1,4 +1,0 @@
-1
-@x ((~(Pred1(x)&Pred2(x))|Pred3(x))&(Pred1(x)|Pred2(x)|Pred3(x)))
-1
-@x ((~Pred1(x)|Pred2(x))&(~Pred2(x)|Pred1(x))=>Pred3(x))
