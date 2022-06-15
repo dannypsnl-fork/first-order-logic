@@ -17,7 +17,35 @@ object BuildVisitor extends FolBaseVisitor[Logic]:
 
   def clausalStep(e: Logic): Logic =
     e match
-      case Implication(l, r) => Or(Not(clausalStep(l)), clausalStep(r))
+      case And(Forall(vars, a), b) =>
+        Forall(vars, And(clausalStep(a), clausalStep(b)))
+      case And(b, Forall(vars, a)) =>
+        Forall(vars, And(clausalStep(a), clausalStep(b)))
+      case Or(Forall(vars, a), b) =>
+        Forall(vars, Or(clausalStep(a), clausalStep(b)))
+      case Or(b, Forall(vars, a)) =>
+        Forall(vars, Or(clausalStep(a), clausalStep(b)))
+      case Implication(Forall(vars, a), b) =>
+        Exists(vars, Implication(clausalStep(a), clausalStep(b)))
+      case Implication(b, Forall(vars, a)) =>
+        Forall(vars, Implication(clausalStep(b), clausalStep(a)))
+      case And(Exists(vars, a), b) =>
+        Exists(vars, And(clausalStep(a), clausalStep(b)))
+      case And(b, Exists(vars, a)) =>
+        Exists(vars, And(clausalStep(a), clausalStep(b)))
+      case Or(Exists(vars, a), b) =>
+        Exists(vars, Or(clausalStep(a), clausalStep(b)))
+      case Or(b, Exists(vars, a)) =>
+        Exists(vars, Or(clausalStep(a), clausalStep(b)))
+      case Implication(Exists(vars, a), b) =>
+        Forall(vars, Implication(clausalStep(a), clausalStep(b)))
+      case Implication(b, Exists(vars, a)) =>
+        Exists(vars, Implication(clausalStep(b), clausalStep(a)))
+      case Not(Forall(vars, a)) => Exists(vars, Not(clausalStep(a)))
+      case Not(Exists(vars, a)) => Forall(vars, Not(clausalStep(a)))
+      case Forall(_, Top())     => Top()
+      case Exists(_, Bottom())  => Bottom()
+      case Implication(l, r)    => Or(Not(clausalStep(l)), clausalStep(r))
       case Or(a, And(b, c)) =>
         And(
           Or(clausalStep(a), clausalStep(b)),
